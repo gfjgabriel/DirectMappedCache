@@ -1,16 +1,16 @@
 package com.company;
 
+import static com.company.Main.*;
+
 public class Cache {
 
     private RAM ram;
-    private  int[] mem = null;
+    private  int[][] mem = null;
     private int size = 0;
-    private int indexMin;
-    private int indexMax;
 
     public Cache(int size, RAM ram) throws InvalidSize {
         this.ram = ram;
-        this.mem = new int[size];
+        this.mem = new int[M][K+2];
         setSize(size);
     }
 
@@ -24,42 +24,48 @@ public class Cache {
         }
     }
 
+    private void setRam(int address) throws InvalidAddress {
+        int antigo = mem[r(address)][TLINHA] | r(address) << nbits_w;
+        int cont = 0;
+        for (int x = antigo; x < antigo + K - 1; x++) {
+            ram.Set(x, mem[r(address)][cont]);
+            cont++;
+        }
+    }
+
+    private void getRam(int address) throws InvalidAddress {
+        int cont = 0;
+        int novo = s(address) << nbits_w;
+        for (int x = novo; x < novo + K - 1; x++) {
+            mem[r(address)][cont] = ram.Get(x);
+            cont++;
+        }
+        mem[r(address)][TLINHA] = t(address);
+        mem[r(address)][MODIF] = 0;
+    }
+
     public int Get(int address) throws InvalidAddress {
-        return CheckAddress(address);
-    }
 
-    public int hit(int address) {
-        return mem[address-indexMin];
-    }
-
-    public int miss(int address) throws InvalidAddress {
-        mem = ram.Get(address, mem, size);
-        return mem[address-indexMin];
+        if (t(address) != mem[r(address)][TLINHA]) {
+            System.out.println("MISS GET ==> " + address);
+            if (mem[r(address)][MODIF] == 1) {
+                setRam(address);
+            }
+            getRam(address);
+        }
+        return mem[r(address)][w(address)];
     }
 
     public void Set(int address, int word) throws InvalidAddress {
-        ram.Set(address, word);
-    }
 
-    private int CheckAddress(int address) throws InvalidAddress {
-        if(indexMax == 0) {
-            setNewIndexes(address);
-            return miss(address);
-        } else if (address < indexMin || address >= indexMax){
-            setNewIndexes(address);
-            return miss(address);
+        if (t(address) != mem[r(address)][TLINHA]) {
+            if (mem[r(address)][MODIF] == 1) {
+                setRam(address);
+            }
+            getRam(address);
         }
-        return hit(address);
-    }
-
-    private void setNewIndexes(int address){
-        if (address > ram.Size() - size){
-            indexMin = ram.Size() - size;
-            indexMax = ram.Size() - 1;
-        } else {
-            indexMin = address;
-            indexMax = address + size;
-        }
+        mem[r(address)][w(address)] = word;
+        mem[r(address)][MODIF] = 1;
     }
 
 }

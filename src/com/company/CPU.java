@@ -19,11 +19,6 @@ public class CPU {
 
         for (int i=iaddr; i<=faddr; ++i) {
             cache.Set(i, i - iaddr + 1);
-        }
-        //Implementação prévia para atualizar o array da cache
-        // antes de aprender o procedimento correto
-        cache.Get(0);
-        for (int i=iaddr; i<=faddr; ++i) {
             io.Write(i + " -> " + cache.Get(i));
         }
     }

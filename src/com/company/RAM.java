@@ -11,24 +11,14 @@ public class RAM {
 
     public int Size() { return size; }
 
-    public int [] Get(int address, int [] mem, int cacheSize) throws InvalidAddress {
+    public int Get(int address) throws InvalidAddress {
         CheckAddress(address);
-        int addressAux;
-        if (address > size - cacheSize){
-            addressAux = size - cacheSize;
-        } else {
-            addressAux = address;
-        }
-        for (int i = 0; i < cacheSize; i++){
-            mem[i] = this.mem[addressAux];
-            addressAux++;
-        }
-        return mem;
+        return mem[address];
     }
 
     public void Set(int address, int word) throws InvalidAddress {
         CheckAddress(address);
-        mem[address] = word;
+        this.mem[address] = mem[word];
     }
 
     private void CheckAddress(int address) throws InvalidAddress {
