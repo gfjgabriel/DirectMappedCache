@@ -47,7 +47,6 @@ public class Cache {
     public int Get(int address) throws InvalidAddress {
 
         if (t(address) != mem[r(address)][TLINHA]) {
-            System.out.println("MISS GET ==> " + address);
             if (mem[r(address)][MODIF] == 1) {
                 setRam(address);
             }

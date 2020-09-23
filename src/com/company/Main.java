@@ -2,13 +2,11 @@ package com.company;
 
 /*
 *
-*
 * Equipe:
 * Davi Pombeiro
 * Gabriel Fortunato
 * Rafael Crespim
 * Yasmin weber
-*
 *
 * */
 
