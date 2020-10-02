@@ -5,10 +5,10 @@ import static com.company.Main.*;
 public class Cache {
 
     private RAM ram;
-    private  int[][] mem = null;
+    private  int[][] mem;
     private int size = 0;
 
-    public Cache(int size, RAM ram) throws InvalidSize {
+    Cache(int size, RAM ram) throws InvalidSize {
         this.ram = ram;
         this.mem = new int[M][K+2];
         setSize(size);
@@ -27,7 +27,7 @@ public class Cache {
     private void setRam(int address) throws InvalidAddress {
         int antigo = mem[r(address)][TLINHA] | r(address) << nbits_w;
         int cont = 0;
-        for (int x = antigo; x < antigo + K - 1; x++) {
+        for (int x = antigo; x < antigo + K ; x++) {
             ram.Set(x, mem[r(address)][cont]);
             cont++;
         }
@@ -36,7 +36,7 @@ public class Cache {
     private void getRam(int address) throws InvalidAddress {
         int cont = 0;
         int novo = s(address) << nbits_w;
-        for (int x = novo; x < novo + K - 1; x++) {
+        for (int x = novo; x < novo + K ; x++) {
             mem[r(address)][cont] = ram.Get(x);
             cont++;
         }
@@ -44,7 +44,7 @@ public class Cache {
         mem[r(address)][MODIF] = 0;
     }
 
-    public int Get(int address) throws InvalidAddress {
+    int Get(int address) throws InvalidAddress {
 
         if (t(address) != mem[r(address)][TLINHA]) {
             if (mem[r(address)][MODIF] == 1) {
@@ -55,7 +55,7 @@ public class Cache {
         return mem[r(address)][w(address)];
     }
 
-    public void Set(int address, int word) throws InvalidAddress {
+    void Set(int address, int word) throws InvalidAddress {
 
         if (t(address) != mem[r(address)][TLINHA]) {
             if (mem[r(address)][MODIF] == 1) {
